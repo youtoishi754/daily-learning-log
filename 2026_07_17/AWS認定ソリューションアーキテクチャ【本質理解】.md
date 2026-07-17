@@ -92,4 +92,98 @@ Outposts（社内にAWS環境を構築）
 - Local Zones：AWS自体を近くへ配置する
 - Outposts：AWSを自社へ持ってくる
 ```
+````md id="q4a8pv"
+# Amazon VPCの本質
+
+## 目的
+AWS上に、自分専用の安全なネットワークを構築する。
+
+## 1. ネットワークを作る
+
+- VPC：AWS上に専用ネットワークを作る
+- CIDRブロック：利用するIPアドレス範囲を決める
+- サブネット：用途ごとにネットワークを分割する
+
+## 2. サーバーを配置する
+
+- パブリックサブネット：インターネット公開用（Webサーバーなど）
+- プライベートサブネット：内部システム用（DBなど）
+- 3AZ構成：複数AZへ配置して障害に強くする
+
+## 3. 外部と接続する
+
+- IGW：インターネットへ接続する
+- NAT Gateway：内部サーバーだけ外部へ通信する
+- VGW：オンプレミスとVPN接続する
+
+## 4. 通信経路を決める
+
+- ルートテーブル：通信先を決定する
+
+## 5. 通信を守る
+
+- セキュリティグループ：インスタンス単位のファイアウォール
+- ネットワークACL：サブネット単位のファイアウォール
+- インバウンド：受信通信を制御
+- アウトバウンド：送信通信を制御
+
+## 6. AWSサービスへ安全に接続する
+
+- VPCエンドポイント：インターネットを使わずAWSサービスへ接続
+- ゲートウェイエンドポイント：S3・DynamoDB専用
+- AWS PrivateLink：他VPCやサービスへプライベート接続
+
+## 7. 他ネットワークと接続する
+
+- VPCピアリング：2つのVPCを直接接続
+- AWS Transit Gateway：多数のVPCを一元接続
+- AWS Direct Connect：専用線でAWSへ接続
+- AWS Direct Connect Gateway：複数VPC・リージョンへ接続
+- AWS Site-to-Site VPN：拠点間VPN接続
+- AWS Managed VPN：AWS管理のVPNサービス
+- AWS Client VPN：PCからAWSへVPN接続
+- SSL-VPN：SSL/TLSを利用したVPN方式
+
+## 8. 運用・監視
+
+- VPCフローログ：通信ログを記録する
+
+## 9. 可用性
+
+- SPOF（単一障害点）：障害で全体停止する箇所
+- マルチAZ・冗長構成でSPOFをなくす
+
+## 全体像
+
+```text
+Internet
+    │
+   IGW
+    │
+──────────────
+ VPC
+ ├─ Public Subnet
+ │    └─ Webサーバー
+ │
+ ├─ Private Subnet
+ │    ├─ Appサーバー
+ │    └─ DBサーバー
+ │
+ └─ NAT Gateway
+      │
+      ▼
+ Internet
+
+他ネットワーク
+    │
+ VPN / Direct Connect
+    │
+   VGW / Transit Gateway
+```
+
+### 本質
+
+**VPCとは「AWS上に安全な会社のネットワークを作り、必要な相手とだけ通信できるよう設計する仕組み」である。**
+````
+
 
